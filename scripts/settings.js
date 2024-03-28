@@ -186,6 +186,17 @@ function initSdk(name) {
     Bots.on(WebSDK.EVENT.WIDGET_OPENED, function () {
         if (isFirstConnection) {
             Bots.connect();
+            var delegate = {
+                beforeSend: function(message) {
+                    const dirtyMessage = message.messagePayload.text;
+                    const cleanMessage = DOMPurify.sanitize(dirtyMessage);
+                    message.messagePayload.text = cleanMessage;
+                    console.log(message.messagePayload.text)
+                    return message;
+                },
+            }
+            
+            Bots.setDelegate(delegate);
 
             isFirstConnection = false;
         }
